@@ -1,0 +1,21 @@
+{
+  "name": "backend",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@types/express": "^5.0.0",
+    "express": "^4.21.1",
+    "redis": "^4.7.0",
+    "websocket": "^1.0.35"
+  },
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "watch": "bun --watch src/index.ts"
+  }
+}

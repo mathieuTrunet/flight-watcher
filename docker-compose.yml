@@ -1,0 +1,42 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    environment:
+      - VITE_WS_URL=ws://localhost:4000
+    depends_on:
+      - backend
+    command: [ "bun", "run", "dev" ]
+
+  backend:
+    build: ./backend
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+    command: [ "bun", "watch" ]
+
+  worker:
+    build: ./worker
+    volumes:
+      - ./worker:/app
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+    command: [ "go", "run", "main.go" ]
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis:/data
+    command: [ "redis-server", "/data/redis.conf" ]
