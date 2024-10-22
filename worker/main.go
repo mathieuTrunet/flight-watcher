@@ -5,20 +5,21 @@ import (
 	"net/http"
 )
 
-func statusHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("hello"))
-	} else {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-	}
-}
+const WORKER_PORT = "5000"
+
+const ENDPOINT_URL = "/worker"
+const EXTERNAL_API_URL = "http://numbersapi.com/random/trivia"
+
+var print = fmt.Println
+var printError = fmt.Errorf
 
 func main() {
-	http.HandleFunc("/hello", statusHandler)
 
-	port := ":8080"
-	if err := http.ListenAndServe(port, nil); err != nil {
-		fmt.Println(err)
+	http.HandleFunc(ENDPOINT_URL, get)
+
+	print("Open on port ", WORKER_PORT)
+
+	if err := http.ListenAndServe(":"+WORKER_PORT, nil); err != nil {
+		printError("Serv error ", err)
 	}
 }
