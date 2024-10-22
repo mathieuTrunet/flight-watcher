@@ -1,25 +1,30 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 )
 
 const WORKER_PORT = "5000"
+const REDIS_PORT = "6379"
 
 const ENDPOINT_URL = "/worker"
-const EXTERNAL_API_URL = "http://numbersapi.com/random/trivia"
+const DATA_SOURCE_URL = "http://numbersapi.com/random/trivia"
 
-var print = fmt.Println
-var printError = fmt.Errorf
+const REDIS_JOB_CHANNEL = "jobs"
+const REDIS_JOB_FINISH_CHANNEL = "job_done"
+const REDIS_KEY = "data_trivia"
 
 func main() {
+	startRedis()
 
-	http.HandleFunc(ENDPOINT_URL, get)
+	go startJobReading(REDIS_JOB_CHANNEL)
 
-	print("Open on port ", WORKER_PORT)
+	http.HandleFunc(ENDPOINT_URL, Get)
 
-	if err := http.ListenAndServe(":"+WORKER_PORT, nil); err != nil {
-		printError("Serv error ", err)
+	print("server open on", WORKER_PORT)
+
+	if error := http.ListenAndServe(":"+WORKER_PORT, nil); error != nil {
+		log.Fatalf("server error %v", error)
 	}
 }

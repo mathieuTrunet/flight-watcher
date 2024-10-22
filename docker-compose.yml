@@ -25,13 +25,12 @@ services:
 
   worker:
     build: ./worker
-    volumes:
-      - ./worker:/app
+    ports:
+      - "5000:5000"
     environment:
       - REDIS_HOST=redis
     depends_on:
       - redis
-    command: [ "go", "run", "main.go" ]
 
   redis:
     image: redis:latest
