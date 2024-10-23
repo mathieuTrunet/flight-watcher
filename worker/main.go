@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 )
@@ -22,7 +23,7 @@ func main() {
 
 	http.HandleFunc(ENDPOINT_URL, Get)
 
-	print("server open on", WORKER_PORT)
+	fmt.Println("server open on", WORKER_PORT)
 
 	if error := http.ListenAndServe(":"+WORKER_PORT, nil); error != nil {
 		log.Fatalf("server error %v", error)

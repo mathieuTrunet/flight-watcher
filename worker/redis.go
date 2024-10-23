@@ -21,7 +21,7 @@ func startRedis() {
 
 	_, error := redisClient.Ping(context).Result()
 	if error != nil {
-		print("redis conection failed", error)
+		fmt.Println("redis conection failed", error)
 	}
 }
 
@@ -30,7 +30,7 @@ func storeKeyValue(key string, value string) error {
 	if error != nil {
 		return error
 	}
-	print("data stored with key|value ", key, " | ", value)
+	fmt.Println("data stored with key|value ", key, " | ", value)
 	return nil
 }
 
@@ -52,15 +52,15 @@ func startJobReading(channel string) {
 	for {
 		msg, error := pubsub.ReceiveMessage(context)
 		if error != nil {
-			print("error receiving job ", error)
+			fmt.Println("error receiving job ", error)
 			continue
 		}
 
-		print("job received ", msg.Payload)
+		fmt.Println("job received ", msg.Payload)
 
 		body, error := fetchExternalApi()
 		if error != nil {
-			print("fetch api failed ", error)
+			fmt.Println("fetch api failed ", error)
 			continue
 		}
 
