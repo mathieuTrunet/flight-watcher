@@ -1,9 +1,20 @@
-import express from 'express'
+import { APP_PORT } from './configs/constants'
+import { onMessageReceive } from './services/websocket'
 
-const app = express()
+Bun.serve({
+  port: APP_PORT,
 
-app.get('/api/hello', (_req, res) => {
-  res.send('hello')
+  fetch(req, server) {
+    const success = server.upgrade(req)
+    if (success) return undefined
+
+    return new Response('Hello world')
+  },
+  websocket: {
+    async message(websocket, message) {
+      onMessageReceive(websocket, message)
+    },
+  },
+
+  development: Bun.env.NODE_ENV === 'development',
 })
-
-app.listen(4000)
