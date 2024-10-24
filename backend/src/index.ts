@@ -1,6 +1,6 @@
 import { APP_PORT } from './configs/constants'
 import { connectToRedis, subscribeToRedis } from './services/redis'
-import { onMessageReceive } from './services/websocket'
+import { onMessageReceive, onSocketOpen, onSocketClose } from './services/websocket'
 
 await connectToRedis()
 
@@ -16,7 +16,16 @@ Bun.serve({
 
     return new Response('Hello world!')
   },
+
   websocket: {
+    open(websocket) {
+      onSocketOpen(websocket)
+    },
+
+    close(websocket) {
+      onSocketClose(websocket)
+    },
+
     async message(websocket, message) {
       onMessageReceive(websocket, message)
     },
