@@ -30,7 +30,6 @@ export const onMessageReceive = (messageSocket: ServerWebSocket<unknown>, messag
 
 export const checkIfSocketIsOpen = () =>
   setInterval(() => {
-    console.log('LA')
     if (!isSocketOpen) return activesSockets.clear()
 
     isSocketOpen = false
