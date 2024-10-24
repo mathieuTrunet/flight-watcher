@@ -1,45 +1,43 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import HelloWorld from './components/HelloWorld.vue'
+import Globe from './components/Globe.vue';
+import Card from './components/Card.vue';
+import SelectedFlight from './components/SelectedFlight.vue';
+import Statistics from './components/Statistics.vue';
 
-const t = ref('')
-
-const y = async () => {
-  const u = await fetch('/api/hello')
-
-  const p = await u.text()
-
-  return p
-}
-
-onMounted(y().then(e => t.value = e))
 </script>
 
 <template>
   <div>
-    <p>{{ t || 'fetching' }}</p>
-    <a href="https://vitejs.dev" target="_blank">dfg
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+    <Globe />
+    <div class="over-content">
+      <div class="card">
+        <Card>
+          <Statistics />
+        </Card>
+      </div>
+      <div />
+      <div class="card">
+        <Card>
+          <SelectedFlight />
+        </Card>
+      </div>
+
+    </div>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+<style scoped lang="scss">
+.over-content {
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr;
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
 }
 
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+.card {
+  margin: 20px;
+  padding: 10px
 }
 </style>
