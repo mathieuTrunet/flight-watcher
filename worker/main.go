@@ -10,11 +10,10 @@ const WORKER_PORT = "5000"
 const REDIS_PORT = "6379"
 
 const ENDPOINT_URL = "/worker"
-const DATA_SOURCE_URL = "http://numbersapi.com/random/trivia"
 
 const REDIS_JOB_START_CHANNEL = "job_start"
 const REDIS_JOB_END_CHANNEL = "job_end"
-const REDIS_KEY = "data_trivia"
+const REDIS_KEY = "flights"
 
 func main() {
 	startRedis()

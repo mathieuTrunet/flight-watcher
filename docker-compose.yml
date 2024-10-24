@@ -27,8 +27,8 @@ services:
     build: ./worker
     ports:
       - "5000:5000"
-    environment:
-      - REDIS_HOST=redis
+    env_file:
+      - .env
     depends_on:
       - redis
 
