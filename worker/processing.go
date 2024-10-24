@@ -115,13 +115,13 @@ func processApiData(rawData []byte) ([]map[string]interface{}, error) {
 	var stateVectorsResponse struct {
 		States [][]interface{} `json:"states"`
 	}
-	if err := json.Unmarshal(rawData, &stateVectorsResponse); err != nil {
-		return nil, fmt.Errorf("data json parsing failed %v", err)
+	if error := json.Unmarshal(rawData, &stateVectorsResponse); error != nil {
+		return nil, fmt.Errorf("data json parsing failed %v", error)
 	}
 
-	processedData, err := process(stateVectorsResponse.States)
-	if err != nil {
-		return nil, fmt.Errorf("data process failed %v", err)
+	processedData, error := process(stateVectorsResponse.States)
+	if error != nil {
+		return nil, fmt.Errorf("data process failed %v", error)
 	}
 
 	return processedData, nil

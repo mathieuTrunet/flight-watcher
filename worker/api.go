@@ -75,14 +75,14 @@ func Get(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	processedData, err := processApiData(body)
-	if err != nil {
+	processedData, error := processApiData(body)
+	if error != nil {
 		http.Error(writer, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	jsonData, err := json.Marshal(processedData)
-	if err != nil {
+	jsonData, error := json.Marshal(processedData)
+	if error != nil {
 		http.Error(writer, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
