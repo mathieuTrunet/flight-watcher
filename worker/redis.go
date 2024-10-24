@@ -2,6 +2,7 @@ package main
 
 import (
 	ctx "context"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -64,7 +65,19 @@ func startJobReading(channel string) {
 			continue
 		}
 
-		storeKeyValue(msg.Payload, string(body))
+		processedData, error := processApiData(body)
+		if error != nil {
+			fmt.Println("data process failed ", error)
+			continue
+		}
+
+		jsonData, error := json.Marshal(processedData)
+		if error != nil {
+			fmt.Println("json parsing failed ", error)
+			continue
+		}
+
+		storeKeyValue(msg.Payload, string(jsonData))
 
 		redisClient.Publish(context, REDIS_JOB_END_CHANNEL, fmt.Sprintf("data ready in key %s", msg.Payload))
 	}
