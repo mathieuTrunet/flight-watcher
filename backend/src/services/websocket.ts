@@ -25,27 +25,17 @@ export const onMessageReceive = (messageSocket: ServerWebSocket<unknown>, messag
     isSocketOpen = true
 
     if (![...activesSockets].some(socket => socket === messageSocket)) activesSockets.add(messageSocket)
-
-    checkIfSocketIsOpen()
   }
-
-  const response = {
-    type: 'response',
-    data: message,
-  }
-
-  messageSocket.send(JSON.stringify(response))
 }
 
-const checkIfSocketIsOpen = () =>
-  setTimeout(() => {
+export const checkIfSocketIsOpen = () =>
+  setInterval(() => {
+    console.log('LA')
     if (!isSocketOpen) return activesSockets.clear()
 
     isSocketOpen = false
 
     publishToRedis(REDIS_JOB_START_CHANNEL, REDIS_KEY)
-
-    checkIfSocketIsOpen()
   }, SIXTEEN_SECONDS_IN_MILLISECONDS)
 
 export const sendMessageToAllSockets = (message: string) =>
