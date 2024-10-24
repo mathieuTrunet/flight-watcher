@@ -1,5 +1,6 @@
 import { createClient } from 'redis'
-import { REDIS_URL } from '../configs/constants'
+import { REDIS_URL, WORKER_URL } from '../configs/constants'
+import { sendMessageToAllSockets } from './websocket'
 
 const redisClient = createClient({ url: REDIS_URL })
 
@@ -23,7 +24,13 @@ export const subscribeToRedis = async (channel: string) => {
 
     await subscriber.connect()
 
-    await subscriber.subscribe(channel, message => console.log(`received message ${channel}: ${message}`))
+    await subscriber.subscribe(channel, async _ => {
+      const response = await fetch(WORKER_URL)
+
+      const body = await response.text()
+
+      sendMessageToAllSockets(body)
+    })
   } catch (error) {
     console.error('error subscribing to channel ', error)
   }

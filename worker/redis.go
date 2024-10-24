@@ -30,7 +30,7 @@ func storeKeyValue(key string, value string) error {
 	if error != nil {
 		return error
 	}
-	fmt.Println("data stored with key|value ", key, " | ", value)
+	fmt.Println("data stored with key|value ", key)
 	return nil
 }
 
