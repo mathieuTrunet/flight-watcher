@@ -66,6 +66,6 @@ func startJobReading(channel string) {
 
 		storeKeyValue(msg.Payload, string(body))
 
-		redisClient.Publish(context, REDIS_JOB_FINISH_CHANNEL, fmt.Sprintf("data ready in key %s", msg.Payload))
+		redisClient.Publish(context, REDIS_JOB_END_CHANNEL, fmt.Sprintf("data ready in key %s", msg.Payload))
 	}
 }

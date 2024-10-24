@@ -1,7 +1,9 @@
-const APP_PORT = 4000
+const SERVER_PORT = 4000
 
 const REDIS_PORT = 6379
-
 const REDIS_URL = `redis://redis:${REDIS_PORT}`
 
-export { APP_PORT, REDIS_URL }
+const REDIS_JOB_START_CHANNEL = 'job_start'
+const REDIS_JOB_END_CHANNEL = 'job_end'
+
+export { SERVER_PORT, REDIS_URL, REDIS_JOB_START_CHANNEL, REDIS_JOB_END_CHANNEL }

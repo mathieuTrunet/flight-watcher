@@ -1,5 +1,6 @@
 import type { ServerWebSocket } from 'bun'
 import { publishToRedis } from './redis'
+import { REDIS_JOB_START_CHANNEL } from '../configs/constants'
 
 const SIXTEEN_SECONDS_IN_MILLISECONDS = 16_000
 
@@ -10,7 +11,7 @@ let isSocketOpen: boolean = false
 export const onSocketOpen = (openedSocket: ServerWebSocket<unknown>) => {
   activesSockets.add(openedSocket)
 
-  publishToRedis('jobs', 'data')
+  publishToRedis(REDIS_JOB_START_CHANNEL, 'data')
 }
 
 export const onSocketClose = (closedSocket: ServerWebSocket<unknown>) => {
@@ -42,7 +43,7 @@ const checkIfSocketIsOpen = () =>
 
     isSocketOpen = false
 
-    publishToRedis('jobs', 'data')
+    publishToRedis(REDIS_JOB_START_CHANNEL, 'data')
 
     checkIfSocketIsOpen()
   }, SIXTEEN_SECONDS_IN_MILLISECONDS)

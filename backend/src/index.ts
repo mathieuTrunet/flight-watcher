@@ -1,13 +1,13 @@
-import { APP_PORT } from './configs/constants'
+import { REDIS_JOB_END_CHANNEL, SERVER_PORT } from './configs/constants'
 import { connectToRedis, subscribeToRedis } from './services/redis'
 import { onMessageReceive, onSocketOpen, onSocketClose } from './services/websocket'
 
 await connectToRedis()
 
-await subscribeToRedis('job_done')
+await subscribeToRedis(REDIS_JOB_END_CHANNEL)
 
 Bun.serve({
-  port: APP_PORT,
+  port: SERVER_PORT,
 
   fetch(req, server) {
     const success = server.upgrade(req)
