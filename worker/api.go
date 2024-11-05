@@ -11,12 +11,9 @@ import (
 
 const OPENSKY_API_URL = "https://api.opensky-network.org/api/states/all"
 
-const ENV_VARIABLE_OPENSKY_ACCOUNT_USERNAME = "OPENSKY_ACCOUNT_USERNAME"
-const ENV_VARIABLE_OPENSKY_ACCOUNT_PASSWORD = "OPENSKY_ACCOUNT_PASSWORD"
-
 func fetchExternalApi() ([]byte, error) {
-	username := os.Getenv(ENV_VARIABLE_OPENSKY_ACCOUNT_USERNAME)
-	password := os.Getenv(ENV_VARIABLE_OPENSKY_ACCOUNT_PASSWORD)
+	username := os.Getenv("OPENSKY_ACCOUNT_USERNAME")
+	password := os.Getenv("OPENSKY_ACCOUNT_PASSWORD")
 
 	if username == "" || password == "" {
 		return nil, fmt.Errorf("missing env variables")

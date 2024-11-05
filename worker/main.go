@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
-const WORKER_PORT = "5000"
-const REDIS_PORT = "6379"
+var WORKER_PORT = os.Getenv("WORKER_PORT")
+var REDIS_PORT = os.Getenv("REDIS_PORT")
 
 const ENDPOINT_URL = "/worker"
 

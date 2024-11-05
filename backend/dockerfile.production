@@ -1,0 +1,17 @@
+FROM oven/bun:latest AS frontend-build
+
+WORKDIR /app
+
+COPY ./frontend /app
+
+RUN bun install && bun run build
+
+FROM oven/bun:latest AS backend
+
+WORKDIR /app
+
+COPY ./backend /app
+
+COPY --from=frontend-build /app/dist /app/dist
+
+RUN bun install
