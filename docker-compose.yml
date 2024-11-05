@@ -6,7 +6,7 @@ services:
     volumes:
       - ./frontend:/app
     environment:
-      - VITE_WS_URL=ws://localhost:4000
+      - "VITE_WS_URL=ws://localhost:${BACKEND_PORT}"
     depends_on:
       - backend
     command: [ "bun", "run", "dev" ]
@@ -14,11 +14,11 @@ services:
   backend:
     build: ./backend
     ports:
-      - "4000:4000"
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
     volumes:
       - ./backend:/app
-    environment:
-      - REDIS_HOST=redis
+    env_file:
+      - .env
     depends_on:
       - redis
     command: [ "bun", "watch" ]
@@ -26,7 +26,7 @@ services:
   worker:
     build: ./worker
     ports:
-      - "5000:5000"
+      - "${WORKER_PORT}:${WORKER_PORT}"
     env_file:
       - .env
     depends_on:
@@ -35,7 +35,7 @@ services:
   redis:
     image: redis:latest
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
       - ./redis:/data
     command: [ "redis-server", "/data/redis.conf" ]
