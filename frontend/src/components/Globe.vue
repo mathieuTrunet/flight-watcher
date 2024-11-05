@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import Globe, { GlobeInstance } from 'globe.gl';
-import { ref, onMounted, watch } from "vue";
-import { useFlightStore } from '../stores/flight';
+import Globe, { GlobeInstance } from 'globe.gl'
+import { ref, onMounted, watch } from 'vue'
+import { useFlightStore } from '../stores/flight'
 
-const GLOBE_LAYOUT_URL = "//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+const GLOBE_LAYOUT_URL = '//unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
 
 const GLOBE_BACKGROUND_IMAGE_URL = '//unpkg.com/three-globe/example/img/night-sky.png'
 
-const getMarker = (rotation: number) => `<svg height="16px" width="16px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+const getMarker = (
+  rotation: number
+) => `<svg height="16px" width="16px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
 	 viewBox="0 0 46.876 46.876" xml:space="preserve" transform="rotate(${rotation})">
 <g>
 	<path style="fill:#00FF00;" d="M26.602,24.568l15.401,6.072l-0.389-4.902c-10.271-7.182-9.066-6.481-14.984-10.615V2.681
@@ -20,60 +22,66 @@ const getMarker = (rotation: number) => `<svg height="16px" width="16px" version
 const store = useFlightStore()
 
 const getPointsData = () =>
-    [...store.flight]
-        .map(flight => ({ name: flight.icao24, lat: flight.latitude, lng: flight.longitude, rotate: flight.true_track }))
+  [...store.flight].map(flight => ({
+    name: flight.icao24,
+    lat: flight.latitude,
+    lng: flight.longitude,
+    rotate: flight.true_track,
+  }))
 
 const globeDiv = ref<HTMLDivElement | null>(null)
 
 let myGlobe: GlobeInstance
 
 const setGlobe = () => {
-    if (globeDiv.value) {
-        myGlobe = Globe()
-        myGlobe(globeDiv.value)
-            .pointOfView({ lat: 47.397456350353366, lng: 2.8154561348203804, altitude: 0.7 })
-            .globeImageUrl(GLOBE_LAYOUT_URL)
-            .backgroundImageUrl(GLOBE_BACKGROUND_IMAGE_URL)
+  if (globeDiv.value) {
+    myGlobe = Globe()
+    myGlobe(globeDiv.value)
+      .pointOfView({ lat: 47.397456350353366, lng: 2.8154561348203804, altitude: 0.7 })
+      .globeImageUrl(GLOBE_LAYOUT_URL)
+      .backgroundImageUrl(GLOBE_BACKGROUND_IMAGE_URL)
 
-            .pointsData(getPointsData())
-    }
+      .pointsData(getPointsData())
+  }
 }
 
-watch(() => store.flight, () => {
+watch(
+  () => store.flight,
+  () => {
     if (myGlobe) {
-        myGlobe
-            .htmlElementsData(getPointsData())
-            .htmlElement((data) => {
-                const element = document.createElement('div')
+      myGlobe.htmlElementsData(getPointsData()).htmlElement(data => {
+        const element = document.createElement('div')
 
-                element.innerHTML = getMarker(data.rotate)
+        element.innerHTML = getMarker(data.rotate)
 
-                element.style.pointerEvents = 'auto'
+        element.style.pointerEvents = 'auto'
 
-                element.style.cursor = 'pointer'
+        element.style.cursor = 'pointer'
 
-                element.onclick = () => { store.setSelectedFlight(data.name) }
+        element.onclick = () => {
+          store.setSelectedFlight(data.name)
+        }
 
-                return element
-            })
-
+        return element
+      })
     }
-})
+  }
+)
 
 onMounted(setGlobe)
 </script>
 
 <template>
-    <div ref="globeDiv"></div>
+  <div ref="globeDiv"></div>
 </template>
 
 <style scoped lang="scss">
 div {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
 }
 </style>

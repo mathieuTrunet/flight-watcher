@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import Globe from './components/Globe.vue';
-import Card from './components/Card.vue';
-import SelectedFlight from './components/SelectedFlight.vue';
-import Statistics from './components/Statistics.vue';
-
+import Globe from './components/Globe.vue'
+import Card from './components/Card.vue'
+import SelectedFlight from './components/SelectedFlight.vue'
+import Statistics from './components/Statistics.vue'
 </script>
 
 <template>
@@ -21,7 +20,6 @@ import Statistics from './components/Statistics.vue';
           <SelectedFlight />
         </Card>
       </div>
-
     </div>
   </div>
 </template>
@@ -38,6 +36,6 @@ import Statistics from './components/Statistics.vue';
 
 .card {
   margin: 20px;
-  padding: 10px
+  padding: 10px;
 }
 </style>
