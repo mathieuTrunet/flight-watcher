@@ -72,5 +72,7 @@ onMounted(setGlobe)
 </script>
 
 <template>
-  <div ref="globeDiv"></div>
+  <div
+    class="absolute z-1 top-0 left-0 w-[100vw] h-[100vh]"
+    ref="globeDiv" />
 </template>

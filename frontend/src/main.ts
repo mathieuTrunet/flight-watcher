@@ -4,8 +4,9 @@ import { createPinia } from 'pinia'
 import { FlightSchema, safeJsonParse } from './utils/parseMessage'
 import { useFlightStore } from './stores/flight'
 import { useErrorStore } from './stores/error'
+import './index.css'
 
-const WEBSOCKET_URL = import.meta.env.VITE_WS_URL
+const WEBSOCKET_URL = import.meta.env.VITE_WS_UR
 const HEIGHT_SECONDS_IN_MILLISECONDS = 8_000
 
 export const websocket = new WebSocket(WEBSOCKET_URL)
