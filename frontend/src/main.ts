@@ -1,5 +1,4 @@
 import { createApp } from 'vue'
-import './styles/main.scss'
 import App from './App.vue'
 import { createPinia } from 'pinia'
 import { FlightSchema, safeJsonParse } from './utils/parseMessage'

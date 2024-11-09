@@ -41,16 +41,3 @@ const mostFrequentCountry = ref('')
     <p>Origine de vol la plus fréquente: {{ mostFrequentCountry }}</p>
   </div>
 </template>
-
-<style scoped lang="scss">
-.top-div {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.title {
-  text-transform: uppercase;
-  text-decoration: underline;
-}
-</style>

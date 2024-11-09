@@ -74,14 +74,3 @@ onMounted(setGlobe)
 <template>
   <div ref="globeDiv"></div>
 </template>
-
-<style scoped lang="scss">
-div {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 0;
-}
-</style>

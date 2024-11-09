@@ -13,16 +13,3 @@ const store = useFlightStore()
     <p v-else>Cliquer sur un vol</p>
   </div>
 </template>
-
-<style scoped lang="scss">
-.top-div {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.title {
-  text-transform: uppercase;
-  text-decoration: underline;
-}
-</style>
