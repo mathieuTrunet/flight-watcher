@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Globe from './components/Globe.vue'
-import Menu from './components/Menu.vue'
+import Menu from './components/MenuBar/Menu.vue'
 </script>
 
 <template>
