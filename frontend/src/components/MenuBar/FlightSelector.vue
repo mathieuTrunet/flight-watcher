@@ -6,6 +6,6 @@ const store = useFlightStore()
 
 <template>
   <div class="shadow-inherit shadow-2xl rounded-md border border-2 border-slate-500/40">
-    <p>{{ store.selectedFlight?.origin_country || 'g' }}</p>
+    <p>{{ store.selectedFlight?.[1] || 'g' }}</p>
   </div>
 </template>

@@ -21,13 +21,9 @@ websocket.onmessage = async message => {
   if (!parsedMessage) return errorStore.setError(true)
 
   const validatedMessage = FlightSchema.safeParse(parsedMessage)
-
-  if (validatedMessage.error) {
-    return errorStore.setError(true)
-  }
+  if (validatedMessage.error) return errorStore.setError(true)
 
   errorStore.setError(false)
-
   flightStore.setFlight(validatedMessage.data)
 }
 

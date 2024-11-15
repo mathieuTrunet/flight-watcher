@@ -21,7 +21,7 @@ func main() {
 
 	go startJobReading(REDIS_JOB_START_CHANNEL)
 
-	http.HandleFunc(ENDPOINT_URL, Get)
+	http.HandleFunc(ENDPOINT_URL, getWorkerData)
 
 	fmt.Println("server open on", WORKER_PORT)
 

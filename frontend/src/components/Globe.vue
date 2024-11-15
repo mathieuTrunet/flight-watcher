@@ -9,6 +9,8 @@ const GLOBE_BACKGROUND_IMAGE_PATH = '/night-sky.webp'
 const COUNTRIES_DATA_PATH = '/countries-dataset.geojson'
 
 const GLOBE_STARTING_POINT_OF_VIEW_PARAMETERS = { lat: 47.397456350353366, lng: 2.8154561348203804, altitude: 0.7 }
+const MAX_ALTITUDE_METERS = 10000
+const NORMALIZED_ALITUTDE = 0.05
 
 const store = useFlightStore()
 
@@ -34,18 +36,23 @@ const initializeGlobe = () => {
 
 const setGlobeHtmlElements = (data: any) => {
   const element = document.createElement('div')
-  element.innerHTML = Plane({ rotation: data.rotation })
+  element.innerHTML = Plane({ rotation: data.rotation, ...(data.altitude < 100 && { state: 'landed' }) })
   element.style.pointerEvents = 'auto'
   element.style.cursor = 'pointer'
   element.onclick = () => store.setSelectedFlight(data.name)
   return element
 }
 
+const normalizeAltitude = (data: any) => (data.altitude / MAX_ALTITUDE_METERS) * NORMALIZED_ALITUTDE || 0
+
 watch(
   () => store.flight,
   () => {
     if (!globeInstance) return
-    globeInstance.htmlElementsData(store.getFlightGlobeData()).htmlElement(setGlobeHtmlElements)
+    globeInstance
+      .htmlElementsData(store.getFlightGlobeData())
+      .htmlElement(setGlobeHtmlElements)
+      .htmlAltitude(normalizeAltitude)
   }
 )
 

@@ -2,127 +2,87 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
-	"regexp"
 )
 
-type StateVector struct {
-	Icao24         string   `json:"icao24"`
-	Callsign       *string  `json:"callsign"`
-	OriginCountry  string   `json:"origin_country"`
-	TimePosition   *int64   `json:"time_position"`
-	LastContact    int64    `json:"last_contact"`
-	Longitude      *float64 `json:"longitude"`
-	Latitude       *float64 `json:"latitude"`
-	BaroAltitude   *float64 `json:"baro_altitude"`
-	OnGround       bool     `json:"on_ground"`
-	Velocity       *float64 `json:"velocity"`
-	TrueTrack      *float64 `json:"true_track"`
-	VerticalRate   *float64 `json:"vertical_rate"`
-	Sensors        []int    `json:"sensors"`
-	GeoAltitude    *float64 `json:"geo_altitude"`
-	Squawk         *string  `json:"squawk"`
-	Spi            bool     `json:"spi"`
-	PositionSource int      `json:"position_source"`
+const STATE_VECTOR_LENGTH = 17
+const STATE_VECTOR_LONGITUDE_INDEX = 5
+const STATE_VECTOR_LATITUDE_INDEX = 6
+
+const STATE_VECTOR_CALLSIGN_INDEX = 1
+const STATE_VECTOR_TIME_POSITION_INDEX = 3
+const STATE_VECTOR_LAST_CONTACT_INDEX = 4
+const STATE_VECTOR_BARO_ALTITUDE_INDEX = 7
+const STATE_VECTOR_SENSORS_INDEX = 12
+const STATE_VECTOR_SPI_INDEX = 15
+const STATE_VECTOR_POSITION_SOURCE_INDEX = 16
+
+type StateVector []interface{}
+
+type ApiResponse struct {
+	Time   int           `json:"time"`
+	States []StateVector `json:"states"`
 }
 
-func process(states [][]interface{}) ([]map[string]interface{}, error) {
-	icao24Regex := regexp.MustCompile("^[0-9a-fA-F]{6}$")
+var removedStateVectorIndex = map[int]struct{}{
+	STATE_VECTOR_CALLSIGN_INDEX:        {},
+	STATE_VECTOR_TIME_POSITION_INDEX:   {},
+	STATE_VECTOR_LAST_CONTACT_INDEX:    {},
+	STATE_VECTOR_BARO_ALTITUDE_INDEX:   {},
+	STATE_VECTOR_SENSORS_INDEX:         {},
+	STATE_VECTOR_SPI_INDEX:             {},
+	STATE_VECTOR_POSITION_SOURCE_INDEX: {},
+}
 
-	var result []map[string]interface{}
+func processApiData(data []byte) ([]StateVector, error) {
+	parsedResponse, error := parseApiResponse(data)
+
+	if error != nil {
+		return nil, error
+	}
+
+	filteredStates := filterStates(parsedResponse.States)
+
+	parsedStates := parseStates(filteredStates)
+
+	return parsedStates, nil
+}
+
+func parseApiResponse(data []byte) (ApiResponse, error) {
+	var response ApiResponse
+
+	if error := json.Unmarshal(data, &response); error != nil {
+		return ApiResponse{}, error
+	}
+
+	return response, nil
+}
+
+func filterStates(states []StateVector) []StateVector {
+	var filteredStates []StateVector
 
 	for _, state := range states {
-		icao24, ok := state[0].(string)
-		if !ok || !icao24Regex.MatchString(icao24) {
-			continue
+		if len(state) == STATE_VECTOR_LENGTH && state[STATE_VECTOR_LONGITUDE_INDEX] != nil && state[STATE_VECTOR_LATITUDE_INDEX] != nil {
+			filteredStates = append(filteredStates, state)
 		}
-
-		stateMap := make(map[string]interface{})
-
-		stateMap["icao24"] = icao24
-
-		if callsign, ok := state[1].(string); ok {
-			stateMap["callsign"] = callsign
-		}
-
-		if originCountry, ok := state[2].(string); ok {
-			stateMap["origin_country"] = originCountry
-		}
-
-		if timePosition, ok := state[3].(float64); ok {
-			stateMap["time_position"] = int64(timePosition)
-		}
-
-		if lastContact, ok := state[4].(float64); ok {
-			stateMap["last_contact"] = int64(lastContact)
-		}
-
-		if longitude, ok := state[5].(float64); ok {
-			stateMap["longitude"] = longitude
-		}
-
-		if latitude, ok := state[6].(float64); ok {
-			stateMap["latitude"] = latitude
-		}
-
-		if baroAltitude, ok := state[7].(float64); ok {
-			stateMap["baro_altitude"] = baroAltitude
-		}
-
-		if onGround, ok := state[8].(bool); ok {
-			stateMap["on_ground"] = onGround
-		}
-
-		if velocity, ok := state[9].(float64); ok {
-			stateMap["velocity"] = velocity
-		}
-
-		if trueTrack, ok := state[10].(float64); ok {
-			stateMap["true_track"] = trueTrack
-		}
-
-		if verticalRate, ok := state[11].(float64); ok {
-			stateMap["vertical_rate"] = verticalRate
-		}
-
-		if sensors, ok := state[12].([]int); ok {
-			stateMap["sensors"] = sensors
-		}
-
-		if geoAltitude, ok := state[13].(float64); ok {
-			stateMap["geo_altitude"] = geoAltitude
-		}
-
-		if squawk, ok := state[14].(string); ok {
-			stateMap["squawk"] = squawk
-		}
-
-		if spi, ok := state[15].(bool); ok {
-			stateMap["spi"] = spi
-		}
-
-		if positionSource, ok := state[16].(float64); ok {
-			stateMap["position_source"] = int(positionSource)
-		}
-
-		result = append(result, stateMap)
 	}
 
-	return result, nil
+	return filteredStates
 }
 
-func processApiData(rawData []byte) ([]map[string]interface{}, error) {
-	var stateVectorsResponse struct {
-		States [][]interface{} `json:"states"`
-	}
-	if error := json.Unmarshal(rawData, &stateVectorsResponse); error != nil {
-		return nil, fmt.Errorf("data json parsing failed %v", error)
+func parseStates(states []StateVector) []StateVector {
+	var parsedStates []StateVector
+
+	for _, state := range states {
+		var parsedState StateVector
+
+		for index, value := range state {
+			if _, remove := removedStateVectorIndex[index]; !remove {
+				parsedState = append(parsedState, value)
+			}
+		}
+
+		parsedStates = append(parsedStates, parsedState)
 	}
 
-	processedData, error := process(stateVectorsResponse.States)
-	if error != nil {
-		return nil, fmt.Errorf("data process failed %v", error)
-	}
-
-	return processedData, nil
+	return parsedStates
 }

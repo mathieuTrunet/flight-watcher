@@ -11,16 +11,21 @@ export const useFlightStore = defineStore('flight', () => {
   }
 
   function getFlightGlobeData() {
-    return [...flight.value].map(flight => ({
-      name: flight.icao24,
-      lat: flight.latitude,
-      lng: flight.longitude,
-      rotation: flight.true_track,
-    }))
+    return [...flight.value].map(flight => {
+      const [icao24, , longitude, latitude, on_ground, , true_track, , geo_altitude] = flight
+      return {
+        name: icao24,
+        lng: longitude,
+        lat: latitude,
+        landed: on_ground,
+        rotation: true_track,
+        altitude: geo_altitude,
+      }
+    })
   }
 
   function setSelectedFlight(name: string) {
-    const targetFlight = flight.value.find(flight => flight.icao24 === name)
+    const targetFlight = flight.value.find(flight => flight[0] === name)
 
     selectedFlight.value = targetFlight
   }

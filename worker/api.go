@@ -10,6 +10,7 @@ import (
 )
 
 const OPENSKY_API_URL = "https://api.opensky-network.org/api/states/all"
+const REQUEST_PARAMETERS = "?lamin=43.628123&lamax=51.110420&lomin=-4.240723&lomax=7.888184"
 
 func fetchExternalApi() ([]byte, error) {
 	username := os.Getenv("OPENSKY_ACCOUNT_USERNAME")
@@ -19,24 +20,28 @@ func fetchExternalApi() ([]byte, error) {
 		return nil, fmt.Errorf("missing env variables")
 	}
 
-	auth := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", username, password)))
+	authentication := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", username, password)))
 
-	apiUrl := fmt.Sprintf("%s?lamin=43.628123&lamax=51.110420&lomin=-4.240723&lomax=7.888184", OPENSKY_API_URL)
+	requestUrl := fmt.Sprintf("%s%s", OPENSKY_API_URL, REQUEST_PARAMETERS)
 
-	request, err := http.NewRequest("GET", apiUrl, nil)
-	if err != nil {
-		return nil, err
+	request, error := http.NewRequest("GET", requestUrl, nil)
+	if error != nil {
+		return nil, error
 	}
 
-	request.Header.Add("Authorization", "Basic "+auth)
+	request.Header.Add("Authorization", "Basic "+authentication)
 
 	client := &http.Client{}
-	response, err := client.Do(request)
-	if err != nil {
-		return nil, err
+	response, error := client.Do(request)
+	if error != nil {
+		return nil, error
 	}
 
 	defer response.Body.Close()
+
+	if response.StatusCode == http.StatusTooManyRequests {
+		return nil, fmt.Errorf("api limit reached %d", response.StatusCode)
+	}
 
 	if response.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("api fetch failed %d", response.StatusCode)
@@ -53,7 +58,7 @@ func fetchExternalApi() ([]byte, error) {
 
 const RESPONSE_HEADER_CONTENT_TYPE = "application/json"
 
-func Get(writer http.ResponseWriter, request *http.Request) {
+func getWorkerData(writer http.ResponseWriter, request *http.Request) {
 	if request.Method != http.MethodGet {
 		http.Error(writer, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
@@ -84,7 +89,7 @@ func Get(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	error = storeKeyValue(REDIS_KEY, string(body))
+	error = storeKeyValue(REDIS_KEY, string(jsonData))
 	if error != nil {
 		http.Error(writer, "Internal Server Error", http.StatusInternalServerError)
 		return
