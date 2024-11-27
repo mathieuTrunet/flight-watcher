@@ -4,18 +4,27 @@ import { ref, onMounted, watch } from 'vue'
 import { useFlightStore } from '../stores/flight'
 import Plane from './Plane'
 
+const DATA_REQUEST_DELAY_MILLISECONDS = 10_000
+
 const GLOBE_IMAGE_PATH = '/earth-dark.jpg'
 const GLOBE_BACKGROUND_IMAGE_PATH = '/night-sky.webp'
 const COUNTRIES_DATA_PATH = '/countries-dataset.geojson'
 
 const GLOBE_STARTING_POINT_OF_VIEW_PARAMETERS = { lat: 47.397456350353366, lng: 2.8154561348203804, altitude: 0.7 }
 const MAX_ALTITUDE_METERS = 10000
-const NORMALIZED_ALITUTDE = 0.05
+const NORMALIZED_ALTITUDE = 0.05
+
+const TRANSPARENT_COLOR_CODE = 'rgba(0, 0, 0, 0)'
+const PRIMARY_BORDER_COLOR_CODE = 'rgba(255, 141, 0, 0.2)'
+const SECONDARY_BORDER_COLOR_CODE = 'rgba(255, 141, 0, 0.7)'
+const COUNTRY_HOVER_COLOR_CODE = 'rgba(255, 141, 0, 0.1)'
+const BORDER_ALTITUDE = 0.007
 
 const store = useFlightStore()
 
 const globeDiv = ref<HTMLDivElement | null>(null)
 let globeInstance: GlobeInstance
+let isFirstDataSet = false
 
 const initializeGlobe = () => {
   if (!globeDiv.value) return
@@ -24,35 +33,58 @@ const initializeGlobe = () => {
     .globeImageUrl(GLOBE_IMAGE_PATH)
     .backgroundImageUrl(GLOBE_BACKGROUND_IMAGE_PATH)
     .pointOfView(GLOBE_STARTING_POINT_OF_VIEW_PARAMETERS)
-    .pointsData(store.getFlightGlobeData())
-    .polygonCapColor(() => 'rgba(0, 0, 0, 0)')
-    .polygonStrokeColor(() => 'rgba(255, 141, 0, 0.7)')
-    .polygonSideColor(() => 'rgba(255, 141, 0, 0.2)')
+    .polygonSideColor(() => PRIMARY_BORDER_COLOR_CODE)
+    .polygonStrokeColor(() => SECONDARY_BORDER_COLOR_CODE)
+    .polygonCapColor(() => TRANSPARENT_COLOR_CODE)
+    .showGraticules(true)
+    .htmlTransitionDuration(DATA_REQUEST_DELAY_MILLISECONDS)
+    .htmlElement(setGlobeHtmlElements)
+    .htmlAltitude(normalizeHtmlAltitude)
     .onPolygonHover(data => {
       //data && console.log(data.properties.ADMIN)
-      globeInstance.polygonCapColor(same => (same === data ? 'rgba(255, 141, 0, 0.1)' : 'rgba(0, 0, 0, 0)'))
+      globeInstance.polygonCapColor(same => (same === data ? COUNTRY_HOVER_COLOR_CODE : TRANSPARENT_COLOR_CODE))
     })
 }
 
 const setGlobeHtmlElements = (data: any) => {
   const element = document.createElement('div')
-  element.innerHTML = Plane({ rotation: data.rotation, ...(data.altitude < 100 && { state: 'landed' }) })
+  element.innerHTML = Plane({ rotation: data.rotation, ...(data.landed && { state: 'landed' }) })
   element.style.pointerEvents = 'auto'
   element.style.cursor = 'pointer'
   element.onclick = () => store.setSelectedFlight(data.name)
   return element
 }
 
-const normalizeAltitude = (data: any) => (data.altitude / MAX_ALTITUDE_METERS) * NORMALIZED_ALITUTDE || 0
+const normalizeHtmlAltitude = (data: any) => (data.altitude / MAX_ALTITUDE_METERS) * NORMALIZED_ALTITUDE
+
+watch(
+  () => store.flight,
+  () => {
+    if (isFirstDataSet) return
+    if (!globeInstance) return
+    isFirstDataSet = true
+    globeInstance.htmlElementsData(store.getFlightGlobeData())
+  }
+)
+
+const setHtmlTravelLatitude = (data: any) => store.getFlightByName(data.name)?.[3] || data.lat
+const setHtmlTravelLongitude = (data: any) => store.getFlightByName(data.name)?.[2] || data.lng
+const setHtmlTravelALtitude = (data: any) => {
+  const t = store.getFlightByName(data.name)
+  if (!t) return data.altitude
+  if (!t[8]) return 0
+  return (t[8] / MAX_ALTITUDE_METERS) * NORMALIZED_ALTITUDE
+}
 
 watch(
   () => store.flight,
   () => {
     if (!globeInstance) return
-    globeInstance
-      .htmlElementsData(store.getFlightGlobeData())
-      .htmlElement(setGlobeHtmlElements)
-      .htmlAltitude(normalizeAltitude)
+    globeInstance.htmlLat(setHtmlTravelLatitude)
+    globeInstance.htmlLng(setHtmlTravelLongitude)
+    globeInstance.htmlAltitude(setHtmlTravelALtitude)
+
+    setTimeout(() => globeInstance.htmlElementsData(store.getFlightGlobeData()), DATA_REQUEST_DELAY_MILLISECONDS)
   }
 )
 
@@ -63,8 +95,8 @@ onMounted(async () => {
   const countriesData = await response.json()
 
   globeInstance
-    .polygonsData(countriesData.features.filter((d: any) => d.properties.ISO_A2 !== 'AQ'))
-    .polygonAltitude(0.007)
+    .polygonsData(countriesData.features.filter((data: any) => data.properties.ISO_A2 !== 'AQ'))
+    .polygonAltitude(BORDER_ALTITUDE)
 })
 </script>
 

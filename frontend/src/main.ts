@@ -6,7 +6,9 @@ import { useFlightStore } from './stores/flight'
 import { useErrorStore } from './stores/error'
 import './index.css'
 
-const WEBSOCKET_URL = import.meta.env.VITE_WS_URL
+const DATA_REQUEST_DELAY_MILLISECONDS = 10_000
+
+const WEBSOCKET_URL = import.meta.env.VITE_WS_UR
 
 export const websocket = new WebSocket(WEBSOCKET_URL)
 
@@ -20,7 +22,7 @@ websocket.onmessage = async message => {
   const validatedMessage = FlightSchema.safeParse(parsedMessage)
   if (validatedMessage.error) return errorStore.setError(true)
 
-  setTimeout(() => websocket.send('socket-on'), 10_000)
+  setTimeout(() => websocket.send('socket-on'), DATA_REQUEST_DELAY_MILLISECONDS)
 
   errorStore.setError(false)
   flightStore.setFlight(validatedMessage.data)

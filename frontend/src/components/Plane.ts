@@ -6,7 +6,7 @@ export default function (parameters: {
   state?: 'selected' | 'landed' | 'flying'
   size?: number
 }) {
-  const { rotation = 0, state = 'flying', size = 16 } = parameters
+  const { rotation = 0, state = 'flying', size = 14 } = parameters
   return `<svg
 height="${size}px"
 width="${size}px"
