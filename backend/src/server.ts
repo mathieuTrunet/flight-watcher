@@ -1,7 +1,7 @@
 import { REDIS_JOB_END_CHANNEL, SERVER_PORT } from './configs/constants'
 import { connectToRedis, subscribeToRedis } from './services/redis'
-import { onMessageReceive, onSocketOpen, onSocketClose, checkIfSocketIsOpen } from './services/websocket'
-import handleRequest from './services/server'
+import { onMessageReceive, onSocketOpen } from './services/websocket'
+import handleHttpRequest from './services/http'
 
 await connectToRedis()
 
@@ -11,7 +11,9 @@ Bun.serve({
   port: SERVER_PORT,
 
   fetch(request, server) {
-    return handleRequest(request, server)
+    if (server.upgrade(request)) return undefined
+
+    return handleHttpRequest(request)
   },
 
   error() {
@@ -23,16 +25,8 @@ Bun.serve({
       onSocketOpen(websocket)
     },
 
-    close(websocket) {
-      onSocketClose(websocket)
-    },
-
     async message(websocket, message) {
       onMessageReceive(websocket, message)
     },
   },
-
-  development: Bun.env.NODE_ENV === 'development',
 })
-
-checkIfSocketIsOpen()

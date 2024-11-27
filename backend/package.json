@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "module": "index.ts",
+  "module": "server.ts",
   "type": "module",
   "devDependencies": {
     "@types/bun": "^1.1.12"
@@ -13,7 +13,7 @@
     "websocket": "^1.0.35"
   },
   "scripts": {
-    "start": "bun run src/index.ts",
-    "watch": "bun --watch src/index.ts"
+    "start": "bun run src/server.ts",
+    "watch": "bun --watch src/server.ts"
   }
 }
