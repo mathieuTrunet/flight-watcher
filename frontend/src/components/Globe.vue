@@ -20,7 +20,7 @@ const SECONDARY_BORDER_COLOR_CODE = 'rgba(255, 141, 0, 0.7)'
 const COUNTRY_HOVER_COLOR_CODE = 'rgba(255, 141, 0, 0.1)'
 const BORDER_ALTITUDE = 0.007
 
-const store = useFlightStore()
+const flightStore = useFlightStore()
 
 const globeDiv = ref<HTMLDivElement | null>(null)
 let globeInstance: GlobeInstance
@@ -51,40 +51,43 @@ const setGlobeHtmlElements = (data: any) => {
   element.innerHTML = Plane({ rotation: data.rotation, ...(data.landed && { state: 'landed' }) })
   element.style.pointerEvents = 'auto'
   element.style.cursor = 'pointer'
-  element.onclick = () => store.setSelectedFlight(data.name)
+  element.onclick = () => flightStore.setSelectedFlight(data.name)
   return element
 }
 
 const normalizeHtmlAltitude = (data: any) => (data.altitude / MAX_ALTITUDE_METERS) * NORMALIZED_ALTITUDE
 
 watch(
-  () => store.flight,
+  () => flightStore.flight,
   () => {
     if (isFirstDataSet) return
     if (!globeInstance) return
     isFirstDataSet = true
-    globeInstance.htmlElementsData(store.getFlightGlobeData())
+    globeInstance.htmlElementsData(flightStore.getFlightGlobeData())
   }
 )
 
-const setHtmlTravelLatitude = (data: any) => store.getFlightByName(data.name)?.[3] || data.lat
-const setHtmlTravelLongitude = (data: any) => store.getFlightByName(data.name)?.[2] || data.lng
+const setHtmlTravelLatitude = (data: any) => flightStore.getFlightByName(data.name)?.[3] || data.lat
+const setHtmlTravelLongitude = (data: any) => flightStore.getFlightByName(data.name)?.[2] || data.lng
 const setHtmlTravelALtitude = (data: any) => {
-  const t = store.getFlightByName(data.name)
+  const t = flightStore.getFlightByName(data.name)
   if (!t) return data.altitude
   if (!t[8]) return 0
   return (t[8] / MAX_ALTITUDE_METERS) * NORMALIZED_ALTITUDE
 }
 
 watch(
-  () => store.flight,
+  () => flightStore.flight,
   () => {
     if (!globeInstance) return
     globeInstance.htmlLat(setHtmlTravelLatitude)
     globeInstance.htmlLng(setHtmlTravelLongitude)
     globeInstance.htmlAltitude(setHtmlTravelALtitude)
 
-    setTimeout(() => globeInstance.htmlElementsData(store.getFlightGlobeData()), DATA_REQUEST_DELAY_MILLISECONDS)
+    setTimeout(
+      () => globeInstance.htmlElementsData(flightStore.getFlightGlobeData()),
+      DATA_REQUEST_DELAY_MILLISECONDS
+    )
   }
 )
 

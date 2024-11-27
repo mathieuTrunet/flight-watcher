@@ -13,7 +13,7 @@ const LINKEDIN_PROFILE_URL = `https://www.linkedin.com/in/mathieu-trunet/`
         src="/src/assets/github-icon.svg"
         width="30" />
     </a>
-    <div class="border-l" />
+    <div class="border-l border-gray-600" />
     <a
       :href="LINKEDIN_PROFILE_URL"
       target="_blank">
