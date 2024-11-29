@@ -18,7 +18,7 @@ const countriesCount = computed(() =>
 const data = computed(() => [
   ...[...Array(NUMBER_OF_DISPLAYED_COUNTRIES).keys()].map((_, index) => countriesCount.value[index]),
   {
-    name: 'autre',
+    name: 'Autre',
     value: countriesCount.value.reduce((sum, value) => sum + value.value, 0) / 25,
   },
 ])
@@ -69,7 +69,7 @@ const drawChart = () => {
     .attr('text-anchor', 'middle')
     .attr('fill', 'white')
     .style('font-size', 15)
-    .text(d => (d.data.name === 'autre' ? otherCountriesCount.value : d.value))
+    .text(d => (d.data.name === 'Autre' ? otherCountriesCount.value : d.value))
     .style('opacity', d => hoveredData.value && (hoveredData.value === d.data.name ? 1 : 0))
 
   arcs
