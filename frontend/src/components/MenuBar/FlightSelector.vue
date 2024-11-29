@@ -62,19 +62,21 @@ const polaricDirection = computed(() => selectedFlight.value?.[6] && getPolaricD
       <div className="space-y-1 border-t border-gray-600 pt-4">
         <FlightSelectorDataRow
           label="Vitesse"
-          :value="selectedFlight[5]"
+          :value="selectedFlight[5] ? Math.floor(selectedFlight[5]) : selectedFlight[5]"
           unit="m/s" />
         <FlightSelectorDataRow
           label="Direction"
-          :value="`${polaricDirection} - ${selectedFlight[6]}`"
+          :value="`${polaricDirection}${selectedFlight[6] && ' - '}${
+            selectedFlight[6] ? Math.floor(selectedFlight[6]) : selectedFlight[6]
+          }`"
           unit="°" />
         <FlightSelectorDataRow
           label="Elevation"
-          :value="selectedFlight[7]"
+          :value="selectedFlight[7] ? Math.floor(selectedFlight[7]) : selectedFlight[7]"
           unit="m/s" />
         <FlightSelectorDataRow
           label="Altitude"
-          :value="selectedFlight[4] ? null : selectedFlight[8]"
+          :value="selectedFlight[4] ? null : selectedFlight[8] ? Math.floor(selectedFlight[8]) : selectedFlight[8]"
           unit="m" />
         <FlightSelectorDataRow
           label="Identifiant Squawk"
