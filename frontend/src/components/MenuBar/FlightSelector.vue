@@ -15,7 +15,7 @@ const polaricDirection = computed(() => selectedFlight.value?.[6] && getPolaricD
   <div class="shadow-inherit shadow-2xl rounded-md border border-2 border-slate-500/40">
     <div
       v-if="!selectedFlight"
-      class="mx-16 my-6 w-full">
+      class="mx-16 my-6 min-w-40 w-full">
       <p>Selectionnez un vol</p>
     </div>
     <div

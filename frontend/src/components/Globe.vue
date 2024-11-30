@@ -3,6 +3,7 @@ import Globe, { GlobeInstance } from 'globe.gl'
 import { ref, onMounted, watch } from 'vue'
 import { useFlightStore } from '../stores/flight'
 import Plane from './Plane'
+import { useCountryStore } from '../stores/country'
 
 const DATA_REQUEST_DELAY_MILLISECONDS = 10_000
 
@@ -21,6 +22,7 @@ const COUNTRY_HOVER_COLOR_CODE = 'rgba(255, 141, 0, 0.1)'
 const BORDER_ALTITUDE = 0.007
 
 const flightStore = useFlightStore()
+const countryStore = useCountryStore()
 
 const globeDiv = ref<HTMLDivElement | null>(null)
 let globeInstance: GlobeInstance
@@ -41,17 +43,28 @@ const initializeGlobe = () => {
     .htmlElement(setGlobeHtmlElements)
     .htmlAltitude(normalizeHtmlAltitude)
     .onPolygonHover(data => {
-      //data && console.log(data.properties.ADMIN)
+      data && setSelectedCountry(data)
       globeInstance.polygonCapColor(same => (same === data ? COUNTRY_HOVER_COLOR_CODE : TRANSPARENT_COLOR_CODE))
     })
 }
 
+const setSelectedCountry = (data: any) => {
+  const { ADMIN: name, FORMAL_EN: officialName, POP_EST: population, POP_YEAR: populationDate } = data.properties
+  countryStore.setCountry({ name, officialName, population, populationDate })
+}
+
 const setGlobeHtmlElements = (data: any) => {
   const element = document.createElement('div')
-  element.innerHTML = Plane({ rotation: data.rotation, ...(data.landed && { state: 'landed' }) })
+  element.innerHTML =
+    flightStore.selectedFlight?.[0] === data.name
+      ? Plane({ rotation: data.rotation, state: 'selected' })
+      : Plane({ rotation: data.rotation, ...(data.landed && { state: 'landed' }) })
   element.style.pointerEvents = 'auto'
   element.style.cursor = 'pointer'
-  element.onclick = () => flightStore.setSelectedFlight(data.name)
+  element.onclick = () => {
+    flightStore.setSelectedFlight(data.name)
+    element.innerHTML = Plane({ rotation: data.rotation, state: 'selected' })
+  }
   return element
 }
 
