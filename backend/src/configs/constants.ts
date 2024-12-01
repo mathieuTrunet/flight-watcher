@@ -11,6 +11,7 @@ const REDIS_URL = `redis://redis:${REDIS_PORT}`
 const REDIS_KEY = 'flights'
 const REDIS_JOB_START_CHANNEL = 'job_start'
 const REDIS_JOB_END_CHANNEL = 'job_end'
+const REDIS_JOB_ERROR_CHANNEL = 'job_error'
 
 const FRONTEND_DIRECTORY_PATH = path.join(__dirname, '..', '..', 'dist')
 
@@ -20,6 +21,7 @@ export {
   REDIS_URL,
   REDIS_JOB_START_CHANNEL,
   REDIS_JOB_END_CHANNEL,
+  REDIS_JOB_ERROR_CHANNEL,
   WORKER_URL,
   REDIS_KEY,
 }

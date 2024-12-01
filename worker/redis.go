@@ -54,6 +54,7 @@ func startJobReading(channel string) {
 		msg, error := pubsub.ReceiveMessage(context)
 		if error != nil {
 			fmt.Println("error receiving job ", error)
+			redisClient.Publish(context, REDIS_JOB_ERROR_CHANNEL, fmt.Sprintf("error: %s", error))
 			continue
 		}
 
@@ -62,23 +63,26 @@ func startJobReading(channel string) {
 		body, error := fetchExternalApi()
 		if error != nil {
 			fmt.Println("fetch api failed ", error)
+			redisClient.Publish(context, REDIS_JOB_ERROR_CHANNEL, fmt.Sprintf("error: %s", error))
 			continue
 		}
 
 		processedData, error := processApiData(body)
 		if error != nil {
 			fmt.Println("data process failed ", error)
+			redisClient.Publish(context, REDIS_JOB_ERROR_CHANNEL, fmt.Sprintf("error: %s", error))
 			continue
 		}
 
 		jsonData, error := json.Marshal(processedData)
 		if error != nil {
 			fmt.Println("json parsing failed ", error)
+			redisClient.Publish(context, REDIS_JOB_ERROR_CHANNEL, fmt.Sprintf("error: %s", error))
 			continue
 		}
 
 		storeKeyValue(msg.Payload, string(jsonData))
 
-		redisClient.Publish(context, REDIS_JOB_END_CHANNEL, fmt.Sprintf("data ready in key %s", msg.Payload))
+		redisClient.Publish(context, REDIS_JOB_END_CHANNEL, fmt.Sprintf("data: ready in key %s", msg.Payload))
 	}
 }

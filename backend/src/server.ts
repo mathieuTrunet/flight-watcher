@@ -1,11 +1,12 @@
-import { REDIS_JOB_END_CHANNEL, SERVER_PORT } from './configs/constants'
-import { connectToRedis, subscribeToRedis } from './services/redis'
+import { SERVER_PORT } from './configs/constants'
+import { connectToRedis, subscribeToJobEnd, subscribeToJobError } from './services/redis'
 import { onMessageReceive, onSocketOpen } from './services/websocket'
 import handleHttpRequest from './services/http'
 
 await connectToRedis()
 
-await subscribeToRedis(REDIS_JOB_END_CHANNEL)
+await subscribeToJobEnd()
+await subscribeToJobError()
 
 Bun.serve({
   port: SERVER_PORT,

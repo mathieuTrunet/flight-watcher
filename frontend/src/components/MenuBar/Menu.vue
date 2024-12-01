@@ -3,6 +3,7 @@ import Title from './Title.vue'
 import FlightSelector from './FlightSelector.vue'
 import PieChart from './PieChart.vue'
 import CountryCard from './CountryCard.vue'
+import StatusDot from './StatusDot.vue'
 </script>
 
 <template>
@@ -12,5 +13,8 @@ import CountryCard from './CountryCard.vue'
     <FlightSelector />
     <CountryCard />
     <PieChart />
+    <div class="absolute w-full -translate-y-6 ml-6">
+      <StatusDot />
+    </div>
   </div>
 </template>
