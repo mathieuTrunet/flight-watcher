@@ -83,10 +83,14 @@ watch(
 const setHtmlTravelLatitude = (data: any) => flightStore.getFlightByName(data.name)?.[3] || data.lat
 const setHtmlTravelLongitude = (data: any) => flightStore.getFlightByName(data.name)?.[2] || data.lng
 const setHtmlTravelALtitude = (data: any) => {
-  const t = flightStore.getFlightByName(data.name)
-  if (!t) return data.altitude
-  if (!t[8]) return 0
-  return (t[8] / MAX_ALTITUDE_METERS) * NORMALIZED_ALTITUDE
+  updateSelectedFlight(data)
+  const targetedFlight = flightStore.getFlightByName(data.name)
+  if (!targetedFlight) return data.altitude
+  if (!targetedFlight[8]) return 0
+  return (targetedFlight[8] / MAX_ALTITUDE_METERS) * NORMALIZED_ALTITUDE
+}
+const updateSelectedFlight = (data: any) => {
+  if (flightStore.selectedFlight?.[0] === data.name) flightStore.setSelectedFlight(data.name)
 }
 
 watch(
