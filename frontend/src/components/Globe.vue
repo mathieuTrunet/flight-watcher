@@ -7,9 +7,9 @@ import { useCountryStore } from '../stores/country'
 
 const DATA_REQUEST_DELAY_MILLISECONDS = 10_000
 
-const GLOBE_IMAGE_PATH = '/earth-dark.jpg'
-const GLOBE_BACKGROUND_IMAGE_PATH = '/night-sky.webp'
-const COUNTRIES_DATA_PATH = '/countries-dataset.geojson'
+const GLOBE_IMAGE_PATH = '/src/assets/earth-dark.jpg'
+const GLOBE_BACKGROUND_IMAGE_PATH = '/src/assets/night-sky.webp'
+const COUNTRIES_DATA_PATH = '/src/assets/countries-dataset.geojson'
 
 const GLOBE_STARTING_POINT_OF_VIEW_PARAMETERS = { lat: 47.397456350353366, lng: 2.8154561348203804, altitude: 0.7 }
 const MAX_ALTITUDE_METERS = 10000
