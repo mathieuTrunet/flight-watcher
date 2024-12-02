@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && bun run copy-assets",
+    "build": "vite build && bun run copy-assets && bun run compress-assets",
     "preview": "vite preview",
-    "copy-assets": "bun run scripts/copy-assets.js"
+    "copy-assets": "bun run scripts/copy-assets.js",
+    "compress-assets": "bun run scripts/compress-assets.js"
   },
   "dependencies": {
     "d3": "^7.9.0",
