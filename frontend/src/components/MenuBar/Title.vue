@@ -4,7 +4,11 @@ const LINKEDIN_PROFILE_URL = `https://www.linkedin.com/in/mathieu-trunet/`
 </script>
 
 <template>
-  <p class="text-xl font-light font-mono">FLIGHT WATCHER</p>
+  <span
+    class="text-3xl font-mono font-bold text-transparent bg-clip-text bg-gradient-to-r to-orange-600 from-red-400"
+    >Flight Watcher</span
+  >
+
   <div class="mt-2 mb-6 flex space-x-2">
     <a
       :href="GITHUB_REPOSITORY_URL"

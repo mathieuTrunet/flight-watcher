@@ -88,14 +88,14 @@ watch([() => data, () => hoveredData], drawChart, { deep: true })
     <div
       class="flex-1"
       ref="chartInstance" />
-    <div class="flex-1 content-center space-y-2 text-center">
+    <div class="flex-1 content-center space-y-1.5 text-center">
       <div
         v-if="store.flight.length"
         v-for="(item, index) in data"
         :key="index"
         @mouseover="hoveredData = item.name"
         @mouseout="hoveredData = null"
-        :class="`text-sm underline-offset-1 cursor-default decoration-orange-400 ${
+        :class="`text-sm font-mono underline-offset-1 cursor-default decoration-orange-400 ${
           hoveredData && (hoveredData === item.name ? 'underline' : 'opacity-20')
         }`">
         <span>{{ item.name }}</span>

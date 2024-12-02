@@ -6,7 +6,7 @@ const store = useCountryStore()
 </script>
 
 <template>
-  <div class="shadow-inherit shadow-2xl rounded-md border border-2 border-slate-500/40">
+  <div class="shadow-inherit shadow-2xl rounded-md border border-2 border-slate-500/40 font-mono">
     <div
       v-if="!store.country"
       class="mx-16 my-6 w-full min-w-40">

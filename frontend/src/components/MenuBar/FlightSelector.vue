@@ -15,7 +15,7 @@ const polaricDirection = computed(() => selectedFlight.value?.[6] && getPolaricD
   <div class="shadow-inherit shadow-2xl rounded-md border border-2 border-slate-500/40">
     <div
       v-if="!selectedFlight"
-      class="mx-16 my-6 min-w-40 w-full">
+      class="mx-16 my-6 min-w-40 w-full font-mono">
       <p>Selectionnez un vol</p>
     </div>
     <div
@@ -23,8 +23,8 @@ const polaricDirection = computed(() => selectedFlight.value?.[6] && getPolaricD
       class="p-6 min-w-80 w-full">
       <div class="flex justify-between items-start mb-4">
         <div>
-          <h3 class="text-xl font-bold">{{ selectedFlight[0] }}</h3>
-          <div class="flex items-center gap-2 mt-1 text-slate-300">
+          <h3 class="text-xl font-bold font-mono">{{ selectedFlight[0] }}</h3>
+          <div class="flex items-center gap-2 mt-1 text-slate-300 font-mono">
             <img
               src="/src/assets/flag.svg"
               width="18" />
@@ -32,7 +32,7 @@ const polaricDirection = computed(() => selectedFlight.value?.[6] && getPolaricD
           </div>
         </div>
         <div
-          :class="`inline-flex items-center gap-1 px-2 py-1 rounded-full text-sm ${
+          :class="`inline-flex items-center gap-1 px-2 py-1 rounded-full text-sm font-mono ${
             !selectedFlight[4] ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
           }`">
           <template v-if="!selectedFlight[4]">
@@ -49,7 +49,7 @@ const polaricDirection = computed(() => selectedFlight.value?.[6] && getPolaricD
           </template>
         </div>
       </div>
-      <div class="flex items-center gap-4 text-sm text-slate-300 mb-3">
+      <div class="flex items-center gap-4 text-sm text-slate-300 mb-3 font-mono">
         <div>
           <span class="font-medium">Lat: </span>
           {{ selectedFlight[3] }}°
@@ -59,7 +59,7 @@ const polaricDirection = computed(() => selectedFlight.value?.[6] && getPolaricD
           {{ selectedFlight[2] }}°
         </div>
       </div>
-      <div className="space-y-1 border-t border-gray-600 pt-4">
+      <div className="space-y-0.5 border-t border-gray-600 pt-4">
         <FlightSelectorDataRow
           label="Vitesse"
           :value="selectedFlight[5] ? Math.floor(selectedFlight[5]) : selectedFlight[5]"
